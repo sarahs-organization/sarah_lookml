@@ -9,7 +9,7 @@ env:
   DATA_CONNECTION_ID: d256db2e-4665-4680-a1ea-a1a7b65b6b77
   
   # This should be the domain you use when you log into hex.
-  DOMAIN: app.hex.tech
+  DOMAIN: app.hex.tech/hextest-tayeri
   # The top level directory containing your semantic layer files. This defaults
   # to the entire repository, but you can set this to be the path of a specific directory.
   DIRECTORY: .
