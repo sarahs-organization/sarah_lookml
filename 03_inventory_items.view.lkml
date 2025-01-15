@@ -1,5 +1,5 @@
 view: inventory_items {
-  sql_table_name: inventory_items ;;
+  sql_table_name: fun.ecommerce.inventory_items ;;
   ## DIMENSIONS ##
 
   dimension: id {
