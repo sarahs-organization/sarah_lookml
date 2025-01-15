@@ -5,7 +5,7 @@ on:
 
 env:
   # This needs to be set based on what language your semantic layer is in (CUBE, LOOKML, METRICFLOW)
-  SYNTAX: LOOKML
+  SYNTAX: LOOK_ML
   DATA_CONNECTION_ID: d256db2e-4665-4680-a1ea-a1a7b65b6b77
   
   # This should be the domain you use when you log into hex.
