@@ -1,0 +1,73 @@
+name: External Semantic Layer Sync
+run-name: ${{ github.actor }} is uploading an external semantic layer 🚀
+on:
+  push
+
+env:
+  # This needs to be set based on what language your semantic layer is in (CUBE, LOOKML, METRICFLOW)
+  SYNTAX: LOOKML
+  DATA_CONNECTION_ID: d256db2e-4665-4680-a1ea-a1a7b65b6b77
+  
+  # This should be the domain you use when you log into hex.
+  DOMAIN: app.hex.tech
+  # The top level directory containing your semantic layer files. This defaults
+  # to the entire repository, but you can set this to be the path of a specific directory.
+  DIRECTORY: .
+jobs:
+  External-Semantic-Layer-Sync:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Confirm DIRECTORY variable
+      run: |
+        if [ -z "$DIRECTORY" ]; then
+          echo "❌ DIRECTORY variable is not set or is empty!"
+          exit 1
+        fi
+        echo "Importing files from directory $DIRECTORY"
+
+    - name: Zip specified directory
+      run: |
+          cd $DIRECTORY
+          zip -r repo.zip .
+
+    - name: Send zip to Hex
+      if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+      run: |
+          response=$(curl -s -w "%{http_code}" -o response.txt -X POST \
+            -F "data=@$DIRECTORY/repo.zip" \
+            -F "syntax=$SYNTAX" \
+            -F "dataConnectionId=$DATA_CONNECTION_ID" \
+            -F "verbose=true" \
+            https://${DOMAIN}/api/v1/semantic-layer \
+            -H "Authorization: Bearer ${{ secrets.HEXSEMANTICLAYERAPITOKEN }}")
+          if [ "$response" -eq 201 ]; then
+            echo "✅ Successfully uploaded semantic layer."
+            cat response.txt | jq .
+          else
+            echo "❌ Failed to upload semantic layer."
+            cat response.txt
+            exit 1
+          fi
+
+    - name: Send zip to Hex (dry run)
+      if: github.ref != 'refs/heads/main' && github.ref != 'refs/heads/master'
+      run: |
+          response=$(curl -s -w "%{http_code}" -o response.txt -X POST \
+            -F "data=@$DIRECTORY/repo.zip" \
+            -F "syntax=$SYNTAX" \
+            -F "dataConnectionId=$DATA_CONNECTION_ID" \
+            -F "verbose=true" \
+            -F "dryRun=true" \
+            https://${DOMAIN}/api/v1/semantic-layer \
+            -H "Authorization: Bearer ${{ secrets.HEXSEMANTICLAYERAPITOKEN }}")
+          if [ "$response" -eq 201 ]; then
+            echo "✅ Successfully validated semantic layer."
+            cat response.txt | jq .
+          else
+            echo "❌ Validation failed for semantic layer."
+            cat response.txt
+            exit 1
+          fi
