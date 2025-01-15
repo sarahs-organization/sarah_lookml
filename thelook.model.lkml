@@ -12,7 +12,7 @@ test: there_are_orders {
 
 
 include: "*.view" # include all the views
-include: "*.dashboard" # include all the dashboards
+# include: "*.dashboard" # include all the dashboards
 
 datagroup: ecommerce_etl {
   ### Datagroups Allow you to sync cache and Persisted Derived Tables to events like ETL
