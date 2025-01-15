@@ -1,5 +1,5 @@
 view: users {
-  sql_table_name: users ;;
+  sql_table_name: fun.ecommerce.users ;;
   ## Demographics ##
 
   dimension: id {
